@@ -8,6 +8,7 @@ import {
   Lightbulb,
   User,
   Settings,
+  History,
   ChevronLeft,
   ChevronRight,
   Sparkles,
@@ -22,6 +23,7 @@ const menuItems = [
   { path: '/data', icon: Database, label: '数据处理', id: 'data' },
   { path: '/code', icon: Code, label: '代码助手', id: 'code' },
   { path: '/creative', icon: Lightbulb, label: '创意工具', id: 'creative' },
+  { path: '/history', icon: History, label: '历史记录', id: 'history' },
 ];
 
 const bottomMenuItems = [
