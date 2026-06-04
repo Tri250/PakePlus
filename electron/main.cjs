@@ -14,6 +14,7 @@ function createWindow() {
     minHeight: 720,
     frame: false,
     backgroundColor: '#1e3a8a',
+    show: false,  // 先隐藏，加载完成后再显示，避免白屏
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -28,8 +29,25 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   } else {
     // 生产环境加载打包后的文件
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    const indexPath = path.join(__dirname, '../dist/index.html');
+    console.log('Loading:', indexPath);
+    mainWindow.loadFile(indexPath);
   }
+
+  // 页面加载完成后显示窗口
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
+  // 监听加载失败
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('Failed to load:', errorCode, errorDescription);
+  });
+
+  // 监听控制台消息
+  mainWindow.webContents.on('console-message', (event, level, message) => {
+    console.log('Renderer:', message);
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
