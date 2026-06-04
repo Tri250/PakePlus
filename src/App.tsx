@@ -298,7 +298,7 @@ function HomePage({ onNavigate }: { onNavigate: (id: string, subtab?: string) =>
       <div className="content-header" style={{ marginBottom: '20px', borderRadius: '6px' }}>
         <div className="content-title">
           <Sparkles size={20} style={{ color: 'var(--accent-color)' }} />
-          Excel AI 助手 - 主要功能
+          主要功能 - 18项核心AI能力
         </div>
         <span className="text-sm text-muted">v2.0.0 · 2000+ 函数 · 2000+ 公式</span>
       </div>
@@ -308,10 +308,10 @@ function HomePage({ onNavigate }: { onNavigate: (id: string, subtab?: string) =>
           欢迎使用 Excel AI 助手
         </h3>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '12px' }}>
-          一款基于人工智能技术的Excel辅助工具，提供智能函数、公式释义、数据分析、代码生成等18项核心功能。
+          一款基于人工智能技术的Excel辅助工具,提供以下18项核心功能。
         </p>
         <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-          点击下方任意功能卡片开始使用，或使用顶部工具栏切换模块
+          点击下方任意功能卡片开始使用,或使用顶部工具栏切换模块
         </p>
       </div>
 
@@ -336,13 +336,15 @@ function HomePage({ onNavigate }: { onNavigate: (id: string, subtab?: string) =>
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'var(--accent-color)',
+                    fontWeight: 600,
+                    fontSize: '14px',
                   }}
                 >
-                  <Icon size={20} />
+                  {idx + 1}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                    {idx + 1}. {feature.title}
+                    {feature.title}
                   </div>
                 </div>
                 {feature.count && (
