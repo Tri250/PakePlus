@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Microsoft YaHei', 'PingFang SC', -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 自定义CSS变量 */
+  --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  --accent-gradient: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.8);
+}
+
+/* 基础样式 */
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--primary-gradient);
+  min-height: 100vh;
+}
+
+/* 自定义组件样式 */
+@layer components {
+  /* 卡片样式 */
+  .card {
+    @apply bg-white/10 backdrop-blur-lg rounded-xl border border-white/20;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  /* 按钮样式 */
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    @apply shadow-glow;
+    transform: translateY(-1px);
+  }
+
+  .btn-accent {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+  }
+
+  .btn-accent:hover {
+    @apply shadow-glow-accent;
+    transform: translateY(-1px);
+  }
+
+  /* 输入框样式 */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-white/20 bg-white/5;
+    @apply text-white placeholder-white/50 focus:outline-none focus:border-primary-500;
+    @apply transition-all duration-200;
+  }
+
+  .input-field:focus {
+    @apply bg-white/10 shadow-glow;
+  }
+
+  /* 导航项样式 */
+  .nav-item {
+    @apply px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200;
+    @apply text-white/70 hover:text-white hover:bg-white/10;
+  }
+
+  .nav-item.active {
+    @apply bg-primary-500/20 text-white border-l-4 border-primary-500;
+  }
+
+  /* 功能卡片样式 */
+  .feature-card {
+    @apply p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10;
+    @apply hover:bg-white/10 hover:border-primary-500/50 hover:shadow-glow;
+    @apply transition-all duration-300 cursor-pointer;
+  }
+
+  /* 标题样式 */
+  .title-gradient {
+    background: linear-gradient(135deg, #ffffff 0%, #93c5fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* 加载动画 */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-4 border-white/20 border-t-primary-500;
+  }
+}
+
+/* 动画效果 */
+@layer utilities {
+  /* 涟漪效果 */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+
+  .ripple:active::after {
+    width: 200px;
+    height: 200px;
+  }
+
+  /* 渐变背景 */
+  .gradient-bg {
+    background: var(--primary-gradient);
+  }
+
+  .gradient-accent {
+    background: var(--accent-gradient);
+  }
+}

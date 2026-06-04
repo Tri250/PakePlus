@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="32" fill="url(#bg)"/>
+  <g transform="translate(64, 64)">
+    <!-- Excel表格图标 -->
+    <rect x="0" y="0" width="128" height="128" rx="8" fill="white" opacity="0.9"/>
+    <line x1="42" y1="0" x2="42" y2="128" stroke="#1e3a8a" stroke-width="2"/>
+    <line x1="86" y1="0" x2="86" y2="128" stroke="#1e3a8a" stroke-width="2"/>
+    <line x1="0" y1="42" x2="128" y2="42" stroke="#1e3a8a" stroke-width="2"/>
+    <line x1="0" y1="86" x2="128" y2="86" stroke="#1e3a8a" stroke-width="2"/>
+    <!-- AI星星 -->
+    <circle cx="64" cy="64" r="24" fill="url(#accent)"/>
+    <path d="M64 40 L68 56 L84 56 L72 66 L76 82 L64 72 L52 82 L56 66 L44 56 L60 56 Z" fill="white"/>
+  </g>
+</svg>
