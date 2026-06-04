@@ -1,10 +1,10 @@
 {
   "name": "excel-ai-desktop",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "description": "Excel AI 助手 - 智能数据处理桌面应用",
-  "author": "Excel AI Team",
+  "author": "热爱生活的小陈工",
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",

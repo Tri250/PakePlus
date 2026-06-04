@@ -222,3 +222,6 @@ export function searchFormulas(keyword: string): FormulaExample[] {
     f.useCase.toLowerCase().includes(lower)
   );
 }
+
+// 兼容旧版本导出
+export const formulaExamples = allFormulas;

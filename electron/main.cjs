@@ -13,7 +13,7 @@ function createWindow() {
     minWidth: 1280,
     minHeight: 720,
     frame: false,
-    backgroundColor: '#1e3a8a',
+    backgroundColor: '#ffffff',
     show: false,  // 先隐藏，加载完成后再显示，避免白屏
     webPreferences: {
       nodeIntegration: false,
