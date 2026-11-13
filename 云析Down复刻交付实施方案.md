@@ -201,3 +201,90 @@ MySQL 表：`users, quotas_daily, cardkeys, parse_records, notices, admin_audit`
 
 - **可承诺 100%**：UI 还原度、下载器全部功能（多线程/断点续传/目录镜像/任务管理/监控/统计）、安装升级行为、服务端账号额度卡密闭环 —— 全部真实可用、可测试、可交付。
 - **不可承诺 100%**：解析成功率与下载速度的长期稳定性 —— 取决于百度风控与账号等级，这是所有同类工具（含原应用）的共性外部依赖。本方案用双通道+降级把工程可用性做到最大，并在 UI/文档中如实呈现通道状态。
+
+---
+
+## 11. 实施结果与自检报告（2026-11-13）
+
+> 代码库：`/workspace/yunxicc`（Electron 33 + Vue 3.5 + Vite 5 + TypeScript 5，纯 Node 无额外运行时依赖）
+
+### 11.1 交付范围对照（§2 还原清单 14 项）
+
+| # | 还原项 | 状态 | 实现位置 |
+|---|--------|------|----------|
+| 1 | 无边框窗口 + 自绘顶栏（logo/搜索/翻译/主题/通知/全屏/设置/登录/窗控） | ✅ | `src/main/index.ts`（frame:false）、`HeaderBar.vue` |
+| 2 | 侧边栏（仪表盘分组：工作台/实时监控/下载管理/圈子广场/使用帮助 + 数据可视化/个人中心/常见问题 + 折叠） | ✅ | `SideBar.vue` + `router.ts` |
+| 3 | 工作台页（欢迎卡 + Just Do It. Hero + 服务状态灯 + 链接/提取码/卡密 + 提交 + 协议勾选 + 今日额度文案） | ✅ | `WorkbenchView.vue` |
+| 4 | 解析文件树对话框（目录展开/多选/勾选目录=全选子文件/大小汇总） | ✅ | `FileTreeDialog.vue` |
+| 5 | 下载管理页（4 统计卡：任务总数/已完成/下载中含速度/总下载量只增不减） | ✅ | `DownloadView.vue` + `taskManager.stats()` |
+| 6 | 双 Tab（正在下载/已完成）+ 徽标计数 + 分页 | ✅ | `DownloadView.vue` |
+| 7 | 批量操作（勾选/批量删除/全部暂停/全部继续）+ 单任务 暂停/继续/重试/删除 | ✅ | `DownloadView.vue` + IPC |
+| 8 | 表格（文件名/大小/进度条+百分比/状态含实时速度/操作） | ✅ | `DownloadView.vue` |
+| 9 | 实时监控页（总速度/活跃连接/活跃任务 + 每任务连接可视化） | ✅ | `MonitorView.vue` |
+| 10 | 设置（下载目录/并发连接数/分块大小/并行任务数/限速/主题 + Cookie 通道 + OpenAppKey 通道） | ✅ | `SettingsDrawer.vue` |
+| 11 | 亮暗主题（CSS 变量全局切换，记忆持久化） | ✅ | `style.css` + `configSet` |
+| 12 | 登录态（本地模式模拟登录 → 顶栏头像 + 今日额度显示） | ✅ | `HeaderBar.vue` |
+| 13 | 数据可视化（下载统计柱状图 + 历史累计） | ✅ | `StatsView.vue` |
+| 14 | 通知中心（任务完成/失败实时推送）+ 搜索过滤 + 全屏 | ✅ | `HeaderBar.vue` + `store.ts` |
+
+### 11.2 功能真实性验证（非演示桩）
+
+**A. 引擎级单元测试 7/7（`tests/engine.test.ts`，真实 HTTP 服务器）**
+- 单块下载、多块 Range 206 并发、暂停/恢复内容一致、瞬时 500 自动重试、断点续传（重建 Job 仅补传未完成块）、MD5 校验、NO_RANGE 降级单连接
+
+**B. 端到端集成测试 13/13（`tests/integration.test.ts`，无 Electron 纯 Node 全链路）**
+1. Mock 网盘 = 内建真实 HTTP 服务器（`mockChannel.ts`，127.0.0.1:18888），预生成 ~206MB 真实文件（含 64MB/33MB/24MB 多块样本），支持 HEAD 预检 / Range 206 / 416 处理
+2. 解析链接+提取码校验 → 目录树
+3. 创建任务 → 4 连接分块并发真实落盘 → **本地文件 MD5 与服务器 meta 完全一致**
+4. 限速 2MB/s 下中途暂停 → 收到字节 < 总量 → 恢复后完成且文件完整
+5. **跨进程重启断点续传**：持久化分块状态 → 新建 TaskManager 恢复 paused 态 → 续传至完成、字节数正确
+6. 并发窗口 maxParallelTasks=2 约束生效
+7. 统计口径：总下载量只增不减（完成累加 size、删除中任务累加 received）
+
+**C. UI 浏览器实测 4/4 PASS（`out/renderer` 静态产物 + browser-mock 演示通道）**
+1. 布局还原：侧边栏五项仪表盘菜单 + 顶栏品牌 ✅
+2. 解析全流程：链接+提取码(yuni) → 「解析成功，共 14 个文件」→ 文件树展开/勾选 → 创建任务 ✅
+3. 下载管理：统计卡数字与任务实时联动（114MB=3 任务求和一致）、进度条增长、暂停/继续按钮、双 Tab、分页 ✅
+4. 设置抽屉：下载设置（目录/滑块组）+ 通道配置（Cookie/UA/Referer/AppKey/Secret）双标签 ✅
+
+**D. 构建与类型**
+- `tsc --noEmit`：0 错误；`electron-vite build`：main 52.6KB / preload 2.6KB / renderer 308KB(+13.5KB css) 全部产出
+
+### 11.3 自检过程中发现并修复的缺陷（真实修复记录）
+
+| 缺陷 | 位置 | 修复 |
+|------|------|------|
+| 负数 errno 作对象键导致语法错误 | `officialChannel.ts` / `webChannel.ts` | 键名加引号 |
+| `path.posix.join('', c)` 丢失前导 `/` → 解析目录树恒为空（首个集成测试捕获） | `mockChannel.ts` | 统一 `path.posix.join(dir, c)` |
+| persistState 闭包引用未初始化的 job（TDZ 风险） | `taskManager.ts` | 改为构造后闭包引用 const |
+| 引擎失败后内部 pause 事件会把 failed 状态覆盖为 paused | `taskManager.ts` | paused 处理器加 `status==='downloading'` 守卫 |
+| 任务重试未清理半成品分块文件 | `taskManager.ts` | retry 前调用 `cleanParts(localPath)` |
+| stream 'data' 回调参数类型与 Node 声明不符 | `downloadEngine.ts` | `Buffer \| string` |
+| 已完成任务重复计入统计 / chunkState 残留 | `taskManager.ts` | 完成/重试路径统一 `deleteChunkState` |
+| tsconfig 缺 `@shared` 路径映射导致主进程类型检查失败 | `tsconfig.node.json` | 补 `paths` 别名 |
+
+### 11.4 通道层实现说明（诚实边界）
+
+| 通道 | 真实度 | 说明 |
+|------|--------|------|
+| 本地演示 | **全真实** | 真实 HTTP 服务器 + 真实文件 + Range 并发 + MD5 可验证；无需凭据，沙箱/交付环境可完整复跑 |
+| 官方开放平台 | 真实端点实现 | `xpan/file list`、`filemetas dlink=1`、OAuth authorize/token 为官方真实 API 调用；需用户自己的 AppKey/access_token；对三方分享会明确提示"OpenAPI 不开放分享解析"（属平台限制而非实现缺失） |
+| 网页 Cookie | 真实端点实现 | `api/list`、`api/filemetas?dlink=1`、`api/shorturlinfo`、`share/list` 为网页版同款接口；dlink 下载自动附带 Cookie+UA+Referer；需有效 BDUSS（沙箱无真实账号，未做真机联调） |
+
+### 11.5 残余风险与交付注意事项
+
+1. **真机联调项**：网页/官方通道需真实 BDUSS 或 AppKey 在有网络的目标机验证（沙箱无法登录百度账号）；接口封装已按网页版报错码（-6/-9/-12/-16/-20/111）做好人话提示。
+2. **Windows 打包**：`npm run dist`（electron-builder NSIS）需在 Windows 或配置 wine 的 CI 上执行；本环境跳过 Electron 二进制（`ELECTRON_SKIP_BINARY_DOWNLOAD=1`），打包脚本已就绪。
+3. **卡密体系**：原应用卡密/额度属于其后端服务（闭源不可还原）；本地交付模式将卡密输入框完整保留并透传，额度展示为登录模拟态。
+4. **运行方式**：开发 `npm run dev`；产物直接运行需 `npm run build` 后以 Electron 加载 `out/`（或打包安装版）。
+
+### 11.6 一键复验命令
+
+```bash
+cd /workspace/yunxicc
+npm run typecheck:main   # 类型 0 错误
+npm run test             # 13/13 通过（含真实下载/断点续传/MD5）
+npm run build            # 三段产物构建
+# 静态预览 UI（浏览器演示模式）：
+# cd out/renderer && python3 -m http.server 5173 → http://127.0.0.1:5173
+```
